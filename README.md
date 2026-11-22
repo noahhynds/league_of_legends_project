@@ -1,2 +1,5 @@
-# league_of_legends_project
-Predicting League of Legends player inactivity using real match data, machine learning, and behavioural analytics.
+# League of Legends Player Retention & Churn Prediction
+
+An end-to-end machine learning project analyzing player engagement,
+identifying behavioural patterns associated with retention, and
+predicting future inactivity using Riot Games match data
