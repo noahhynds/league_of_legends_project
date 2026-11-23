@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 API_KEY = os.getenv("RIOT_API_KEY")
-# print("API key loaded:", bool(API_KEY))
 
+# get account
 def get_account(game_name: str, tag_line: str):
     url = (
         "https://americas.api.riotgames.com"
@@ -21,6 +21,7 @@ def get_account(game_name: str, tag_line: str):
 
     return response
 
+# get puuid
 def get_puuid(game_name: str, tag_line: str):
     response = get_account(game_name, tag_line)
     response.raise_for_status()
@@ -29,7 +30,7 @@ def get_puuid(game_name: str, tag_line: str):
 
     return puuid
 
-
+# get match ids
 def get_match_ids(puuid: str):
     url = (
         "https://americas.api.riotgames.com"
@@ -46,6 +47,8 @@ def get_match_ids(puuid: str):
 
     return match_ids
 
+
+# get match data
 def get_match_details(match_id: str):
     url = (
         "https://americas.api.riotgames.com"
@@ -59,18 +62,3 @@ def get_match_details(match_id: str):
     response.raise_for_status()
     match_data = response.json()
     return match_data
-
-
-if __name__ == "__main__":
-    puuid = get_puuid("GuppyWoo", "NA1")
-    match_ids = get_match_ids(puuid)
-
-    first_match_id = match_ids[0]
-    match_data = get_match_details(first_match_id)
-
-    print("Match ID:", first_match_id)
-    print("Game duration:", match_data["info"]["gameDuration"])
-
-    
-    
-    
