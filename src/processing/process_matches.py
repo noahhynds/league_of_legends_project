@@ -70,14 +70,22 @@ for file_path in raw_dir.glob("*.json"):
 
 
 df = pd.DataFrame(match_records)
+
+# Data validation
 print(df)
 print(df.shape)
 print(df.dtypes)
 print(df.isna().sum())
 print(df.duplicated(subset=["match_id", "puuid"]).sum())
 
-output_dir = Path("data/processed")
+# Dataset summary
+print("Unique matches:", df["match_id"].nunique())
+print("Unique players:", df["puuid"].nunique())
+print("Earliest match:", df["game_date"].min())
+print("Latest match:", df["game_date"].max())
 
+# Export processed data
+output_dir = Path("data/processed")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 output_path = output_dir / "player_matches.csv"

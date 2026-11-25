@@ -9,7 +9,7 @@ from src.ingestion.riot_client import (
 )
 
 # collect all matches
-def collect_matches(game_name: str, tag_line: str, count: int = 5):
+def collect_seed_matches(game_name: str, tag_line: str, count: int = 5):
     puuid = get_puuid(game_name, tag_line)
     match_ids = get_match_ids(puuid)
 
@@ -31,3 +31,7 @@ def collect_matches(game_name: str, tag_line: str, count: int = 5):
             print(f"Successfully saved: {match_id}")
         else:
             print(f"Match already saved: {match_id}")
+
+
+if __name__ == "__main__":
+    collect_seed_matches("GuppyWoo", "NA1", count=5)

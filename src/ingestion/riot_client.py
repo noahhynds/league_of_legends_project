@@ -52,17 +52,35 @@ def get_puuid(game_name: str, tag_line: str):
 
 
 # get match ids
-def get_match_ids(puuid: str):
+def get_match_ids(puuid: str, start: int = 0, count: int = 100):
     url = (
         "https://americas.api.riotgames.com"
         f"/lol/match/v5/matches/by-puuid/{puuid}/ids"
         )
-    response = riot_request(url, params={"count": 100})
+    response = riot_request(url, params={"start": start, "count": count})
     response.raise_for_status()
     match_ids = response.json()
 
     return match_ids
 
+
+# all matches
+def get_all_match_ids(puuid: str):
+    all_match_ids = []
+    start = 0
+    count = 100
+
+    while True:
+        match_ids = get_match_ids(puuid, start=start, count=count)
+        print(f"Start: {start}, Matches retrieved: {len(match_ids)}")
+        all_match_ids.extend(match_ids)
+
+        if len(match_ids) < count:
+            break
+
+        start += count
+
+    return all_match_ids
 
 # get match data
 def get_match_details(match_id: str):

@@ -2,7 +2,6 @@ import pandas as pd
 from pathlib import Path
 import json
 from src.ingestion.riot_client import (
-    get_puuid,
     get_match_ids,
     get_match_details
 )
@@ -26,7 +25,7 @@ print(f"Total unique matches: {len(all_match_ids)}")
 output_dir = Path("data/raw")
 output_dir.mkdir(parents=True, exist_ok=True)
 
-for match_id in sorted(all_match_ids)[:5]:
+for match_id in sorted(all_match_ids)[:50]:
     output_path = output_dir / f"{match_id}.json"
     if not output_path.exists():
         match_data = get_match_details(match_id)
