@@ -13,7 +13,7 @@ Currently in development.
 - [x] Data processing and validation
 - [x] API rate limiting and retries
 - [x] Pagination
-- [ ] Date-based match retrieval
+- [x] Date-based match retrieval
 - [ ] Large-scale data collection
 - [ ] Exploratory data analysis
 - [ ] PostgreSQL integration

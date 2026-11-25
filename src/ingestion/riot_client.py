@@ -3,7 +3,6 @@ import os
 import time
 import requests
 from dotenv import load_dotenv
-
 load_dotenv(override=True)
 
 API_KEY = os.getenv("RIOT_API_KEY")
@@ -18,8 +17,7 @@ def riot_request(url: str, params=None):
             url,
             headers={"X-Riot-Token": API_KEY},
             params=params,
-            timeout=15
-    )
+            timeout=15)
         if response.status_code == 429:
             if i == 4:
                 response.raise_for_status()
@@ -52,12 +50,21 @@ def get_puuid(game_name: str, tag_line: str):
 
 
 # get match ids
-def get_match_ids(puuid: str, start: int = 0, count: int = 100):
+def get_match_ids(
+        puuid: str,
+        start: int = 0,
+        count: int = 100,
+        start_time: int | None =  None,
+        end_time: int | None = None):
     url = (
         "https://americas.api.riotgames.com"
         f"/lol/match/v5/matches/by-puuid/{puuid}/ids"
         )
-    response = riot_request(url, params={"start": start, "count": count})
+
+    params = {"start": start, "count": count, "startTime": start_time, "endTime": end_time}
+
+
+    response = riot_request(url, params=params)
     response.raise_for_status()
     match_ids = response.json()
 
@@ -65,13 +72,13 @@ def get_match_ids(puuid: str, start: int = 0, count: int = 100):
 
 
 # all matches
-def get_all_match_ids(puuid: str):
+def get_all_match_ids(puuid: str, start_time: int | None = None, end_time: int | None = None):
     all_match_ids = []
     start = 0
     count = 100
 
     while True:
-        match_ids = get_match_ids(puuid, start=start, count=count)
+        match_ids = get_match_ids(puuid, start=start, count=count, start_time=start_time, end_time=end_time)
         print(f"Start: {start}, Matches retrieved: {len(match_ids)}")
         all_match_ids.extend(match_ids)
 
