@@ -11,13 +11,25 @@ API_KEY = os.getenv("RIOT_API_KEY")
 
 # helper
 def riot_request(url: str, params=None):
-    response = requests.get(
+    for i in range(5):
+
+        time.sleep(1.3)
+        response = requests.get(
             url,
             headers={"X-Riot-Token": API_KEY},
             params=params,
             timeout=15
     )
-    return response
+        if response.status_code == 429:
+            if i == 4:
+                response.raise_for_status()
+
+            retry_after = int(response.headers.get("Retry-After", 120))
+
+            print(f"Attempt {i + 1}. Rate limit reached. Waiting {retry_after} seconds.")
+            time.sleep(retry_after)
+        else:
+            return response
 
 # get account
 def get_account(game_name: str, tag_line: str):
