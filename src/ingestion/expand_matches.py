@@ -4,7 +4,7 @@ from pathlib import Path
 from src.ingestion.riot_client import get_all_match_ids
 
 from datetime import datetime, timezone
-
+from src.ingestion.collection_manifest import save_collection_manifest
 from src.ingestion.match_storage import (
     download_missing_matches,
     count_downloaded_matches,
@@ -15,16 +15,27 @@ def expand_matches(player_count: int = 3,
                    match_count: int | None = None,
                    start_time: int | None = None,
                    end_time: int | None = None):
-    file_path = Path("data/processed/player_matches.csv")
-
+    
+    file_path = Path("data/processed/player_cohort.csv")
     df = pd.read_csv(file_path)
+    players = df["puuid"]
 
-    unique_players = df["puuid"].unique()
+    manifest = Path("data/processed/player_collection_status.csv")
+    if manifest.exists():
+        manifest_df = pd.read_csv(manifest)
 
+        completed_players = manifest_df[(manifest_df["is_complete"] == True) &
+                                        (manifest_df["start_time"] == start_time) &
+                                        (manifest_df["end_time"] == end_time)]["puuid"]
+        players = players[~players.isin(completed_players)]
+    if players.empty:
+        print("All cohort players have completed collection")
+        return
+    print(f"Remaining players: {len(players)}")
     all_match_ids = set()
     player_match_ids = {}
 
-    for puuid in unique_players[:player_count]:
+    for puuid in players[:player_count]:
         match_ids = get_all_match_ids(
             puuid,
             start_time=start_time,
@@ -57,15 +68,7 @@ def expand_matches(player_count: int = 3,
     }
         collection_records.append(record)
 
-    collection_df = pd.DataFrame(collection_records)
-    output_dir = Path("data/processed")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    output_path = output_dir / "player_collection_status.csv"
-
-    collection_df.to_csv(output_path, index=False)
-    print(collection_df)
-    print(f"Successfully saved: {output_path}")
+    save_collection_manifest(collection_records)
 
 if __name__ == "__main__":
     start_time = int(datetime(2026, 9, 1, tzinfo=timezone.utc).timestamp())
