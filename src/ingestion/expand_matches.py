@@ -14,7 +14,7 @@ from src.ingestion.match_storage import (
 def expand_matches(player_count: int = 3,
                    match_count: int | None = None,
                    start_time: int | None = None,
-                   end_time: int | None = None):
+                   end_time: int | None = None) -> bool:
     
     file_path = Path("data/processed/player_cohort.csv")
     df = pd.read_csv(file_path)
@@ -30,7 +30,7 @@ def expand_matches(player_count: int = 3,
         players = players[~players.isin(completed_players)]
     if players.empty:
         print("All cohort players have completed collection")
-        return
+        return True
     print(f"Remaining players: {len(players)}")
     all_match_ids = set()
     player_match_ids = {}
@@ -69,6 +69,7 @@ def expand_matches(player_count: int = 3,
         collection_records.append(record)
 
     save_collection_manifest(collection_records)
+    return False
 
 if __name__ == "__main__":
     start_time = int(datetime(2026, 9, 1, tzinfo=timezone.utc).timestamp())

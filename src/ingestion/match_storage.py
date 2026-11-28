@@ -9,10 +9,11 @@ def save_match(match_id: str, match_data: dict):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     output_path = output_dir / f"{match_id}.json"
+    temp_path = output_dir / f"{match_id}.tmp"
 
-    with open(output_path, "w") as file:
+    with open(temp_path, "w") as file:
         json.dump(match_data, file, indent=4)
-
+    temp_path.replace(output_path)
 
 def download_missing_matches(match_ids: list[str]):
     output_dir = Path("data/raw")
